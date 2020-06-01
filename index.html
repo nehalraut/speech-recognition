@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+ 
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <title>Speech to text conversion</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+        <link rel="stylesheet" href="style.css">
+        <link href="https://fonts.googleapis.com/css?family=Shadows+Into+Light" rel="stylesheet">
+ 
+    </head>
+ 
+    <body>
+        <div class="container">
+ 
+            <h1>&nbsp&nbsp&nbsp&nbsp&nbsp Speech to text conversion</h1>
+ 
+            <div class="myapp"> 
+               
+                <div class="input">
+                    <textarea id="textbox" rows="6"></textarea>
+                </div>        
+                <button id="start-btn" title="Start Recording">Start</button>
+                <button id="pause-record-btn" title="Pause Recording">Pause</button>
+                <p id="instructions">Press the button</p>
+                <br><h1>OR</h1><br>
+                  
+                  <h1>Text to speech conversion</h1><br>
+                 Select Voice: <select id='voiceList'></select> <br><br><br>
+
+                <input style='width: 530px; height: 60px;' id='txt' /> <br><br> 
+                <button id='btn'>Speak</button>
+            </div>
+        </div>
+       
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="script.js"></script>
+        <script>     
+        var txtInput = document.querySelector('#txt');
+        var voiceList = document.querySelector('#voiceList');
+        var btnSpeak = document.querySelector('#btn');
+        var synth = window.speechSynthesis;
+        var voices = [];
+
+        PopulateVoices();
+        if(speechSynthesis !== undefined){
+            speechSynthesis.onvoiceschanged = PopulateVoices;
+        }
+
+        btnSpeak.addEventListener('click', ()=> {
+            var toSpeak = new SpeechSynthesisUtterance(txtInput.value);
+            var selectedVoiceName = voiceList.selectedOptions[0].getAttribute('data-name');
+            voices.forEach((voice)=>{
+                if(voice.name === selectedVoiceName){
+                    toSpeak.voice = voice;
+                }
+            });
+            synth.speak(toSpeak);
+        });
+
+        function PopulateVoices(){
+            voices = synth.getVoices();
+            var selectedIndex = voiceList.selectedIndex < 0 ? 0 : voiceList.selectedIndex;
+            voiceList.innerHTML = '';
+            voices.forEach((voice)=>{
+                var listItem = document.createElement('option');
+                listItem.textContent = voice.name;
+                listItem.setAttribute('data-lang', voice.lang);
+                listItem.setAttribute('data-name', voice.name);
+                voiceList.appendChild(listItem);
+            });
+
+            voiceList.selectedIndex = selectedIndex;
+        }
+
+
+            </script>
+    </body>
+</html>
